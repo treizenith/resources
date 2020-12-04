@@ -1,0 +1,57 @@
+ <!DOCTYPE html>
+ <html lang="en">
+
+ <head>
+     <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <title>Document</title>
+ </head>
+
+ <body>
+     <input type="text" name="Username" id="username" placeholder="Username">
+     <input type="password" name="Password" id="password" placeholder="Password">
+     <button onclick="login()">Login</button>
+     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+     <script>
+         // Sayfaya girdiğinde direk kontrol edecek.
+         axios.put('/verify', {}, {
+                 headers: {
+                     "Authorization": localStorage.getItem("token")
+                 }
+             })
+             .then(function (response) {
+                 console.log(response);
+                 if (response.data.done == true) {
+                    return console.log("Başarılı!");
+                 } else {
+                    localStorage.removeItem('token');
+                     // Logine yönlendir vs.
+                 }
+             })
+             .catch(function (error) {
+                 console.log(error);
+                    localStorage.removeItem('token');
+             });
+
+         function login() {
+             axios.put('/login', {
+                     username: document.getElementById("username").value,
+                     password: document.getElementById("password").value
+                 })
+                 .then(function (response) {
+                     console.log(response);
+                     console.log(response.headers);
+                     if (response.data.done == true) {
+                        console.log(response.headers["Authorization"])
+                        localStorage.setItem('token', response.headers.authorization);
+                        return console.log("Başarılı!")
+                     }
+                 })
+                 .catch(function (error) {
+                     console.log(error);
+                 });
+         }
+     </script>
+ </body>
+
+ </html>
